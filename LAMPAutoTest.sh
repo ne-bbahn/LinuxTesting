@@ -1,6 +1,6 @@
 # LAMP install script
 
-# you will need to run "replace '127.0.0.1' '[your ip]' -- LAMPAutoTest.sh"
+# you will need to run "replace 'your_ip_here' '[your ip address]' -- LAMPAutoTest.sh"
 
 sudo yum install httpd
 sudo systemctl start httpd.service
