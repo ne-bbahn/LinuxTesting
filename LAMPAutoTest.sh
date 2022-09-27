@@ -22,6 +22,7 @@ sudo yum install php php-mysql
 sudo systemctl restart httpd.service
 "<?php ?>" >> /var/www/html/info.php
 
+sudo yum install epel-release
 sudo yum install phpmyadmin
 
 replace '127.0.0.1' 'your_ip_here' -- /etc/httpd/conf.d/phpMyAdmin.conf
