@@ -1,8 +1,5 @@
 # LAMP install script
 
-echo Enter your computer's IP address
-read myip
-
 sudo yum install httpd
 $ yes | ./LAMPAutoTest.sh
 sudo systemctl start httpd.service
@@ -32,7 +29,7 @@ $ yes | ./LAMPAutoTest.sh
 $ yes | ./LAMPAutoTest.sh
 
 
-replace '127.0.0.1' $myip -- /etc/httpd/conf.d/phpMyAdmin.conf
+replace '127.0.0.1' 'your_ip_here' -- /etc/httpd/conf.d/phpMyAdmin.conf
 
 sudo systemctl restart httpd
 sudo systemctl restart mariadb.service
