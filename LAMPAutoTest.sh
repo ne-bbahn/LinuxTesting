@@ -1,12 +1,12 @@
 # LAMP install script
 
+# you will need to run "replace '127.0.0.1' '[your ip]' -- LAMPAutoTest.sh"
+
 sudo yum install httpd
-$ yes | ./LAMPAutoTest.sh
 sudo systemctl start httpd.service
 sudo systemctl enable httpd.service
 
 sudo yum install mariadb-server
-$ yes | ./LAMPAutoTest.sh
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
 
@@ -19,15 +19,10 @@ sudo mysql_secure_installation
 # Y
 
 sudo yum install php php-mysql
-$ yes | ./LAMPAutoTest.sh
-$ yes | ./LAMPAutoTest.sh
 sudo systemctl restart httpd.service
 "<?php ?>" >> /var/www/html/info.php
 
 sudo yum install phpmyadmin
-$ yes | ./LAMPAutoTest.sh
-$ yes | ./LAMPAutoTest.sh
-
 
 replace '127.0.0.1' 'your_ip_here' -- /etc/httpd/conf.d/phpMyAdmin.conf
 
