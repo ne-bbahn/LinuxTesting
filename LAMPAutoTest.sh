@@ -31,3 +31,6 @@ sudo systemctl restart httpd
 sudo systemctl restart mariadb.service
 
 # now you should be able to log into [your CentOS VM ip]/phpMyAdmin with your mariadb credentials.
+
+# install a bunch of stuff to get ready for nagios, nagios plugins and NDOUtils. Just uncomment it to run :D
+# sudo yum install -y gcc glibc-common wget gd gd-devel perl postfix unzip make gettext automake autoconf openssl-devel net-snmp net-snmp-utils epel-release perl-Net-SNMP mysql mysql-server mysql-devel mariadb mariadb-server mariadb-devel
