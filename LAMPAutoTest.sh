@@ -2,11 +2,11 @@
 
 # you will need to run "replace 'your_ip_here' '[your ip address]' -- LAMPAutoTest.sh"
 
-sudo yum install httpd
+sudo yum install -y httpd
 sudo systemctl start httpd.service
 sudo systemctl enable httpd.service
 
-sudo yum install mariadb-server
+sudo yum install -y mariadb-server
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
 
@@ -18,12 +18,12 @@ sudo mysql_secure_installation
 # Y
 # Y
 
-sudo yum install php php-mysql
+sudo yum install -y php php-mysql
 sudo systemctl restart httpd.service
 "<?php ?>" >> /var/www/html/info.php
 
-sudo yum install epel-release
-sudo yum install phpmyadmin
+sudo yum install -y epel-release
+sudo yum install -y phpmyadmin
 
 replace '127.0.0.1' '192.168.53.144' -- /etc/httpd/conf.d/phpMyAdmin.conf
 
