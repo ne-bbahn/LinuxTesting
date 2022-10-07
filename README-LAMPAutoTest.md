@@ -6,7 +6,7 @@ wget https://raw.githubusercontent.com/bbnagitesting/LinuxTesting/LAMPAutoTest.s
 
 chmod +x LAMPAutoTest.sh
 
-replace '[your_ip]' '[your ip here]' -- ./LAMPAutoTest.sh
+replace '[your_ip]' 'XXX.XXX.XXX.XXX' -- ./LAMPAutoTest.sh #where 'XXX.XXX.XXX.XXX' is your ip address
 
 ./LAMPAutoTest.sh
 
