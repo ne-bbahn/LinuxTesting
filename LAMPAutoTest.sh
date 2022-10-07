@@ -25,7 +25,7 @@ sudo systemctl restart httpd.service
 sudo yum install -y epel-release
 sudo yum install -y phpmyadmin
 
-replace '127.0.0.1' '192.168.53.144' -- /etc/httpd/conf.d/phpMyAdmin.conf
+replace '127.0.0.1' '[your_ip]' -- /etc/httpd/conf.d/phpMyAdmin.conf
 
 sudo systemctl restart httpd
 sudo systemctl restart mariadb.service
