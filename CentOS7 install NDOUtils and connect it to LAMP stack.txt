@@ -28,7 +28,7 @@ mysql -u root -p'mypassword'
 ## now in SQL DB:
 # create nagios database and NDOUtils user, grant that user necessary permissions
 CREATE DATABASE nagios DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-CREATE USER 'ndoutils'@'localhost' IDENTIFIED BY 'ndoutils_password'
+CREATE USER 'ndoutils'@'localhost' IDENTIFIED BY 'ndoutils_password';
 GRANT USAGE ON *.* TO 'ndoutils'@'localhost' IDENTIFIED BY 'ndoutils_password' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
 GRANT ALL PRIVILEGES ON nagios.* TO 'ndoutils'@'localhost' WITH GRANT OPTION ;
 \q # exit DB
