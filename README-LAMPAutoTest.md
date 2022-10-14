@@ -11,5 +11,3 @@ replace '[your_ip]' 'XXX.XXX.XXX.XXX' -- ./LAMPAutoTest.sh #where 'XXX.XXX.XXX.X
 
 ./LAMPAutoTest.sh
 ```
-
-#You can also remove a # tag on the last line to install all the necessary files for setting up nagios core, plugins and NDOUtils
