@@ -115,5 +115,6 @@ printf "broker_module=/usr/local/nagios/bin/ndomod.o config_file=/usr/local/nagi
 cd /usr/local/nagios/etc
 grep -nr 'db_'
 ```
-#### Here you should see at the bottom of ndo2db.cfg: db_user=ndoutils
-#### and db_pass=ndoutils_password
+#### Here you should see at the bottom of ndo2db.cfg: 
+db_user=ndoutils
+db_pass=ndoutils_password
