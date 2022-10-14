@@ -117,4 +117,5 @@ grep -nr 'db_'
 ```
 #### Here you should see at the bottom of ndo2db.cfg: 
 db_user=ndoutils
+
 db_pass=ndoutils_password
