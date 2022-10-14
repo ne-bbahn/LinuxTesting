@@ -1,8 +1,8 @@
-# nagios setup ndoutils to store nagios data in LAMP stack
-## NOTE: this is a continuation of nagios-core-plugins setup guide, and you need to complete "CentOS7 install nagios-core-plugins" guide before moving on to this one. 
-## You should also have a LAMP stack set up, enabled and working
-###  Also, some of these commands must be executed as root user in your CentOS7 terminal, so I suggest being logged in as root throughout and being very careful with making sure your commands are correct. 
-#  MAKE SURE TO BACK UP sysctl.conf as seen on line 40 or you may damage your OS. 
+# Nagios Core: setup NDOutils to store Nagios data in your LAMP stack
+NOTE: this is a continuation of nagios-core-plugins setup guide, and you need to complete "CentOS7 install nagios-core-plugins" guide before moving on to this one. 
+You should also have a LAMP stack set up, enabled and working
+Also, some of these commands must be executed as root user in your CentOS7 terminal, so I suggest being logged in as root throughout and being very careful with making sure your commands are correct. 
+# MAKE SURE TO BACK UP sysctl.conf as seen on line 40 or you may damage your OS. 
 
 ### guide I used:  https://support.nagios.com/kb/article/ndoutils-installing-ndoutils-406.html#CentOS
 
@@ -20,8 +20,9 @@ ps ax | grep mysql | grep -v grep # check that it's running
 ```
 
 ### if not already done, do the following to enable and start mariadb:
-### systemctl enable mariadb.service
-### systemctl start mariadb.service
+``` systemctl enable mariadb.service
+systemctl start mariadb.service
+```
 
 ### save password as 'mypassword'
 `/usr/bin/mysqladmin -u root password 'mypassword'`
