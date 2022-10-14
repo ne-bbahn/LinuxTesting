@@ -1,4 +1,4 @@
-##### Execute these commands to set up your LAMP stack quickly once you already know what you're doing.
+# Execute these commands to set up your LAMP stack quickly once you already know what you're doing.
 
 ```
 cd /tmp 
