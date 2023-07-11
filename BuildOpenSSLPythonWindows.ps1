@@ -96,6 +96,11 @@ choco install visualstudio2022buildtools -y --package-parameters "--add Microsof
 
 choco install nasm -y
 
+$env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+refreshenv
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 # Add Perl, NASM, Git and nmake to the PATH
 Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
