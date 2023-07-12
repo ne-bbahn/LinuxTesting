@@ -93,7 +93,6 @@ choco install git -y
 choco install strawberryperl -y
 #choco install visualstudio2019buildtools -y --add Microsoft.VisualStudio.Component.VC.140 -y #TODO: remove (Not found?)
 choco install visualstudio2022buildtools -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
-
 choco install nasm -y
 
 $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
@@ -117,13 +116,13 @@ if (Test-Path -Path "C:\Program Files\7-Zip"){
     $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
     Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller -UseBasicParsing
     Start-Process $7ZipInstaller -ArgumentList "/S" -Wait
-    $env:Path += ";C:\Program Files\7-Zip"
     Remove-Item -Path $7ZipInstaller
     if ($LASTEXITCODE -ne 0) { 
         Write-Host "Error details: $($Error[0])"
         Throw "Error downloading/installing/configuring 7-Zip"
     }
 }
+$env:Path += ";C:\Program Files\7-Zip"
 
 ### 4. Build OpenSSL
 # OpenSSL takes three eternities to build, so we give the option to skip if they have it installed already
@@ -145,7 +144,7 @@ if ($build_openssl) {
     Write-Host "Extracting $openssl_tar"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
     $openssl_tar_extracted = ($openssl_tar -replace '.tar.gz', '.tar')
-    Write-Host "Extracting $tar2"
+    Write-Host "Extracting $openssl_tar_extracted"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
     if ($LASTEXITCODE -ne 0) { 
         Write-Host "Error details: $($Error[0])"
