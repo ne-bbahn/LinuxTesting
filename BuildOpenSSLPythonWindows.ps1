@@ -115,11 +115,14 @@ if (Test-Path -Path "C:\Program Files\7-Zip"){
 } else {
     Write-Host "Installing 7-Zip..."
     $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
-    Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller
+    Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller -UseBasicParsing
     Start-Process $7ZipInstaller -ArgumentList "/S" -Wait
     $env:Path += ";C:\Program Files\7-Zip"
     Remove-Item -Path $7ZipInstaller
-    if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
+    if ($LASTEXITCODE -ne 0) { 
+        Write-Host "Error details: $($Error[0])"
+        Throw "Error downloading/installing/configuring 7-Zip"
+    }
 }
 
 ### 4. Build OpenSSL
@@ -129,8 +132,11 @@ if ($build_openssl) {
     ## 4.0 Download OpenSSL
     if($download_files){
         Write-Host "Downloading OpenSSL..."
-        Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop
-        if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
+        Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop -UseBasicParsing
+        if ($LASTEXITCODE -ne 0) { 
+            Write-Host "Error details: $($Error[0])"
+            Throw "Error downloading OpenSSL"
+        }
     }
 
     ## 4.1 Extract OpenSSL
@@ -141,12 +147,14 @@ if ($build_openssl) {
     $openssl_tar_extracted = ($openssl_tar -replace '.tar.gz', '.tar')
     Write-Host "Extracting $tar2"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
-    if ($LASTEXITCODE -ne 0) { Throw "Error extracting openssl-$openssl_ver.tar.gz" }
+    if ($LASTEXITCODE -ne 0) { 
+        Write-Host "Error details: $($Error[0])"
+        Throw "Error extracting OpenSSL"
+    }
 
     if (-not $preserve_files){
         Remove-Item -Path $openssl_tar, ($openssl_tar -replace '\.tar.gz', '.tar')
     }
-    if ($LASTEXITCODE -ne 0) { Throw "Error removing OpenSSL files" }
 
     cd openssl-$openssl_ver # $base_dir\openssl-$openssl_ver
 
@@ -155,7 +163,10 @@ if ($build_openssl) {
     cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && nmake && nmake test && nmake install"
     $env:OPENSSL_ROOT_DIR = "$base_url\OpenSSL"
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
-    if ($LASTEXITCODE -ne 0) { Throw "Error configuring/building/installing OpenSSL" }
+    if ($LASTEXITCODE -ne 0) { 
+        Write-Host "Error details: $($Error[0])"
+        Throw "Error configuring/building/installing OpenSSL"
+    }
 }
 
 ### 5. Build Python
@@ -163,8 +174,11 @@ cd $base_dir
 if ($download_files -and $false){ #TODO: remove false
     ## 5.0 Download Python
     Write-Host "Downloading Python..."
-    Invoke-WebRequest -Uri https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz -OutFile $base_dir\Python-$python_ver.tgz -ErrorAction Stop
-    if ($LASTEXITCODE -ne 0) { Throw "Error downloading Python to $base_dir" }
+    Invoke-WebRequest -Uri https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz -OutFile $base_dir\Python-$python_ver.tgz -ErrorAction Stop -UseBasicParsing
+    if ($LASTEXITCODE -ne 0) { 
+        Write-Host "Error details: $($Error[0])"
+        Throw "Error downloading Python"
+    }
 
     ## 5.1 Extract Python
     Write-Host "Extracting Python..."
@@ -178,7 +192,10 @@ if ($download_files -and $false){ #TODO: remove false
 if (-not $preserve_files){
     Remove-Item -Path $python_tar, $python_tar_extracted
 }
-if ($LASTEXITCODE -ne 0) { Throw "Error extracting Python-$python_ver.tgz" }
+if ($LASTEXITCODE -ne 0) { 
+    Write-Host "Error details: $($Error[0])"
+    Throw "Error extracting Python"
+}
 
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
 
@@ -227,7 +244,10 @@ $content | Set-Content -Path $openssl_props
 Write-Host "Building Python..."
 cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && $cpython_dir\PCbuild\build.bat"
 Write-Host $pwd
-if ($LASTEXITCODE -ne 0) { Throw "Error building Python" }
+if ($LASTEXITCODE -ne 0) { 
+    Write-Host "Error details: $($Error[0])"
+    Throw "Error building Python"
+}
 
 # return python executable for build_windows.bat
 return "$cpython_dir\PCbuild\$cpu_arch\python.exe"
