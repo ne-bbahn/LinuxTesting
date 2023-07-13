@@ -93,7 +93,7 @@ choco install git -y
 choco install strawberryperl -y
 #choco install visualstudio2019buildtools -y --add Microsoft.VisualStudio.Component.VC.140 -y #TODO: remove (Not found?)
 choco install visualstudio2022buildtools -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
-choco install visualstudio2022community -y
+choco install visualstudio2022community -y --params="'--add Microsoft.VisualStudio.Workload.VCTools'"
 choco install nasm -y
 
 $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
