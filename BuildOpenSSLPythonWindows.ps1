@@ -93,6 +93,7 @@ choco install git -y
 choco install strawberryperl -y
 #choco install visualstudio2019buildtools -y --add Microsoft.VisualStudio.Component.VC.140 -y #TODO: remove (Not found?)
 choco install visualstudio2022buildtools -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
+choco install visualstudio2022community -y
 choco install nasm -y
 
 $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
@@ -107,6 +108,11 @@ $env:Path += ";C:\Program Files\NASM"
 $env:Path += ";C:\Program Files\Git\bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin"
+
+if ($LASTEXITCODE -ne 0) { 
+    Write-Host "Error details: $($Error[0])"
+    Throw "Failed to add dependencies to Path"
+}
 
 ### 3. Download and install 7-zip
 if (Test-Path -Path "C:\Program Files\7-Zip"){
@@ -123,6 +129,7 @@ if (Test-Path -Path "C:\Program Files\7-Zip"){
     }
 }
 $env:Path += ";C:\Program Files\7-Zip"
+refreshenv
 
 ### 4. Build OpenSSL
 # OpenSSL takes three eternities to build, so we give the option to skip if they have it installed already
@@ -131,40 +138,83 @@ if ($build_openssl) {
     ## 4.0 Download OpenSSL
     if($download_files){
         Write-Host "Downloading OpenSSL..."
-        Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop -UseBasicParsing
+        #TODO: uncomment Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop -UseBasicParsing
         if ($LASTEXITCODE -ne 0) { 
             Write-Host "Error details: $($Error[0])"
             Throw "Error downloading OpenSSL"
         }
     }
 
+    Get-Command Start-Process
+
+    if (Test-Path "C:\Program Files\7-Zip\7z.exe"){
+        Write-Host "7z.exe found"
+    } else {
+        Write-Host "7z.exe not found"
+    }
+
+    Write-Host $env:Path
+
     ## 4.1 Extract OpenSSL
     Write-Host "Extracting OpenSSL..."
+    # extract .tar.gz
     $openssl_tar = "$base_dir\openssl-$openssl_ver.tar.gz"
     Write-Host "Extracting $openssl_tar"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
+    try {
+        Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
+    } catch {
+        Write-Host $_.Exception
+    }
+    while (Get-Process 7z -ErrorAction SilentlyContinue) {
+        Start-Sleep -Seconds 1
+    }
     $openssl_tar_extracted = ($openssl_tar -replace '.tar.gz', '.tar')
+    Start-Sleep -Seconds 30
+    Do {
+        Start-Sleep -Seconds 3
+    }While(-not (Test-Path "$openssl_tar_extracted"))
+    Write-Host "$openssl_tar_extracted found"
+    # extract .tar
     Write-Host "Extracting $openssl_tar_extracted"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
+    try {
+        Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
+    } catch {
+        Write-Host $_.Exception
+    }
+    while (Get-Process 7z -ErrorAction SilentlyContinue) {
+        Start-Sleep -Seconds 1
+    }
     if ($LASTEXITCODE -ne 0) { 
         Write-Host "Error details: $($Error[0])"
         Throw "Error extracting OpenSSL"
     }
 
-    if (-not $preserve_files){
-        Remove-Item -Path $openssl_tar, ($openssl_tar -replace '\.tar.gz', '.tar')
+    While(-not (Test-Path "openssl-$openssl_ver")){
+        Start-Sleep -Seconds 1
     }
-
-    cd openssl-$openssl_ver # $base_dir\openssl-$openssl_ver
+    cd "openssl-$openssl_ver\openssl-$openssl_ver" # $base_dir\openssl-$openssl_ver
+    Write-Host "Path: $env:Path"
 
     ## 4.2 Build & Install OpenSSL
     Write-Host "Building and installing OpenSSL..."
+    if(-not (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat")){
+        Throw "Could not find Visual Studio VsDevCmd.bat"
+    }
     cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && nmake && nmake test && nmake install"
     $env:OPENSSL_ROOT_DIR = "$base_url\OpenSSL"
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
     if ($LASTEXITCODE -ne 0) { 
         Write-Host "Error details: $($Error[0])"
         Throw "Error configuring/building/installing OpenSSL"
+    }
+
+    # remove tarballs if set to
+    if (-not $preserve_files){
+        Remove-Item -Path $openssl_tar, ($openssl_tar -replace '\.tar.gz', '.tar')
+    }
+    if ($LASTEXITCODE -ne 0) { 
+        Write-Host "Error details: $($Error[0])"
+        Throw "Error removing OpenSSL tarball"
     }
 }
 
