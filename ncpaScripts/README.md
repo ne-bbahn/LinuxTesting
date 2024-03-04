@@ -1,6 +1,6 @@
 # Guide:
 - Install NCPA
-- `activateNCPApassive.sh [ip_addr]` to open firewall port 5693/tcp and activate NCPA's passive (it will just turn on the passive and is not configured to point to a server)
+- `activatePassive.sh [ip_addr]` to open firewall port 5693/tcp and activate NCPA's passive (it will just turn on the passive and is not configured to point to a server)
 
 ## Other Scripts:
 
