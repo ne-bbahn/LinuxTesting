@@ -16,6 +16,7 @@ elif [[ "$OS" == "CentOS" ]]; then
 fi
 
 sed -i 's/handlers = None/handlers = nrdp/' /usr/local/ncpa/etc/ncpa.cfg
+sed -i 's/parent =/parent =http:\/\/8.8.8.8\/nrdp/' /usr/local/ncpa/etc/ncpa.cfg
 sed -i '5,\$s/^#//' /usr/local/ncpa/etc/ncpa.cfg.d/example.cfg
 sudo systemctl restart ncpa
 
